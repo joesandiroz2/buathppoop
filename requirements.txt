@@ -1,0 +1,8 @@
+Flask
+Flask-SocketIO
+requests
+beautifulsoup4
+lxml
+httpx
+cloudscraper
+pycryptodome

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Saver</title>
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <style>
+        body {
+            background-color: #f0f0f0; /* Warna latar belakang abu-abu */
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .preview {
+            margin-top: 20px;
+        }
+        #outputproses {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: black; /* Latar belakang hitam */
+            color: white; /* Teks berwarna putih */
+            border-radius: 5px;
+            white-space: pre-wrap; /* Preserve whitespace */
+            height: 800px; /* Tinggi tetap untuk output */
+            overflow-y: auto; /* Scroll jika output lebih dari tinggi */
+        }
+        .success-message {
+            color: green; /* Teks hijau */
+            font-weight: bold; /* Teks tebal */
+        }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col s12 m4 l4 ">
+            <h6>Extract /f/ poophd</h6>
+            <form method="POST">
+                <div class="input-field">
+                    <textarea 
+                      style="border:3px solid black;height:250px" 
+                    name="link_data" id="link_data" class="materialize-textarea" placeholder="Masukkan link di sini..."></textarea>
+                    <label for="link_data">Link</label>
+                </div>
+                <button type="submit" class="btn waves-effect waves-light">Save</button>
+            </form>
+        </div>
+
+        <div class="col s12 m3 l3">
+            <div class="preview">
+                <h5>Preview Links:</h5>
+                <ul class="collection">
+                    {% if preview_links %}
+                        {% for link in preview_links %}
+                            <li class="collection-item">{{ link }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="collection-item">Tidak ada link yang disimpan.</li>
+                    {% endif %}
+                </ul>
+                <button id="start-button" class="btn red waves-effect waves-light btn-large">Proses</button>
+                <div id="process-status" class="success-message"></div> <!-- Tempat untuk menampilkan status proses -->
+            </div>
+        </div>
+
+        <div class="col s12 m5 l5">
+            <h5>Output Proses:</h5>
+            <div id="outputproses"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m4 l4">
+            <h5>Hasil:</h5>
+            <textarea id="outputtxt" style="border:3px solid black; height:500px; width:100%;" readonly></textarea>
+        </div>
+    </div>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        const socket = io();
+
+        // Mulai proses ketika tombol diklik
+        document.getElementById('start-button').onclick = function() {
+            socket.emit('start_process');
+            this.disabled = true; // Nonaktifkan tombol setelah memulai
+            document.getElementById('process-status').innerHTML = ''; // Reset status
+        };
+
+        // Dengarkan output proses dari server
+        socket.on('process_output', function(msg) {
+            const outputDiv = document.getElementById('outputproses');
+            outputDiv.innerHTML += msg.data + '<br>'; // Tambahkan output baru
+            outputDiv.scrollTop = outputDiv.scrollHeight; // Scroll ke bawah otomatis
+        });
+
+        // Dengarkan event untuk menandakan proses selesai
+        socket.on('process_complete', function(data) {
+            document.getElementById('start-button').disabled = false; // Aktifkan kembali tombol
+            document.getElementById('process-status').innerHTML = 'Proses sudah selesai'; // Tampilkan pesan
+            
+            // Tampilkan hasil di textarea
+            const outputTxt = document.getElementById('outputtxt');
+            outputTxt.value = data.results.join('\n'); // Gabungkan hasil per baris
+        });
+    </script>
+</body>
+</html>
