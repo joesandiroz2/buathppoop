@@ -60,7 +60,11 @@
                         <li class="collection-item">Tidak ada link yang disimpan.</li>
                     {% endif %}
                 </ul>
-                <button id="start-button" class="btn red waves-effect waves-light btn-large">Proses</button>
+                <button id="start-button" class="btn red waves-effect waves-light btn-large">Proses /f/</button>
+
+                <button id="start-extract" class="btn green waves-effect waves-light btn-large">Extract /d/ </button>
+
+
                 <div id="process-status" class="success-message"></div> <!-- Tempat untuk menampilkan status proses -->
             </div>
         </div>
@@ -73,8 +77,12 @@
 
     <div class="row">
         <div class="col s12 m4 l4">
-            <h5>Hasil:</h5>
+            <h5>Hasil \f\:</h5>
             <textarea id="outputtxt" style="border:3px solid black; height:500px; width:100%;" readonly></textarea>
+        </div>
+        <div class="col s12 m4 l4">
+            <h5>Hasil \d\:</h5>
+            <textarea id="pooplinktxt" style="border:3px solid red; height:500px; width:100%;" readonly></textarea>
         </div>
     </div>
 
@@ -82,6 +90,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
         const socket = io();
+
+        // Mulai proses extract ketika tombol diklik
+document.getElementById('start-extract').onclick = function() {
+    socket.emit('start_extract'); // Emit event untuk memulai extract
+    this.disabled = true; // Nonaktifkan tombol setelah memulai
+    document.getElementById('process-status').innerHTML = ''; // Reset status
+};
 
         // Mulai proses ketika tombol diklik
         document.getElementById('start-button').onclick = function() {
@@ -100,11 +115,15 @@
         // Dengarkan event untuk menandakan proses selesai
         socket.on('process_complete', function(data) {
             document.getElementById('start-button').disabled = false; // Aktifkan kembali tombol
+              document.getElementById('start-extract').disabled = false; // Aktifkan kembali tombol
+      
             document.getElementById('process-status').innerHTML = 'Proses sudah selesai'; // Tampilkan pesan
             
             // Tampilkan hasil di textarea
             const outputTxt = document.getElementById('outputtxt');
             outputTxt.value = data.results.join('\n'); // Gabungkan hasil per baris
+             const pooplinktxt = document.getElementById('pooplinktxt');
+            pooplinktxt.value = data.results.join('\n'); 
         });
     </script>
 </body>

@@ -70,5 +70,30 @@ def start_process():
     thread = threading.Thread(target=run_process)
     thread.start()
 
+
+@socketio.on('start_extract')
+def start_extract():
+    # Mulai proses extract di thread terpisah
+    thread = threading.Thread(target=run_extract_process)
+    thread.start()
+
+def run_extract_process():
+    # Jalankan pooplink.txt dan ambil outputnya
+    process = subprocess.Popen(['python3', 'pooplink.py'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    while True:
+        output = process.stdout.readline()
+        if output == '' and process.poll() is not None:
+            break
+        if output:
+            # Emit output ke client
+            socketio.emit('process_output', {'data': output.strip()})
+
+    with open('output_link.txt', 'r') as f:
+        results = f.read().splitlines()  # Baca setiap baris
+
+
+    # Emit event ketika proses selesai
+    socketio.emit('process_complete', {'results': results, 'type': 'extract'})  # Tambahkan type
+    
 if __name__ == '__main__':
     socketio.run(app, debug=True)
