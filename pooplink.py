@@ -210,6 +210,7 @@ def encrypt_url(url, key):
 dood_api_key = '219725bbkborbourrp2cd4'
 lulustream_api_key = '936yclje4cl5mud6kcw'  # Lulustream API Key
 streamhg_api_key = "32zasu667srtcygcrm"
+turboviplay_api_key = "FOzGBxlRyM"
 
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
@@ -217,6 +218,7 @@ dood_api_endpoint = "https://doodapi.com/api/upload/url"
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
 
 streamhg_api_endpoint = "https://bigwarp.io/api/upload/url"
+turboviplay_api_endpoint = "https://api.turboviplay.com/uploadUrl"
 
 
 # Variabel untuk menghitung jumlah sukses
@@ -253,6 +255,13 @@ try:
             # streamhg request
             response_lulustream = httpx.get(streamhg_api_endpoint, params={"key": streamhg_api_key, "url": new_url})
             if response_lulustream.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
+
+            # turboviplay request
+            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": streamhg_api_key, "url": new_url})
+            if response_turboviplay.status_code == 200:
                 success_count += 1
             else:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
