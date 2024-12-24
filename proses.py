@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urlunparse
+import re
+
+domain_ganti = "https://poo.phd"  # Replace with your target domain
 
 def scrape_website(url: str) -> list:
     headers = {
@@ -69,13 +72,13 @@ def main():
         urls = file.readlines()
 
     scraped_content = []
+    new_netloc = urlparse(domain_ganti).netloc  # Mengambil netloc dari domain_ganti
 
     for url in urls:
         url = url.strip()  # Remove any leading/trailing whitespace
         if url:
             # Replace the domain with 'poophd.cc'
             parsed_url = urlparse(url)
-            new_netloc = 'poophd.cc'  # New domain
             url = urlunparse(parsed_url._replace(netloc=new_netloc))  # Replace the domain
             scraped_result = scrape_website(url)
             scraped_content.extend(scraped_result)
@@ -100,7 +103,6 @@ from Crypto.Util.Padding import pad
 import base64
 import httpx
 
-domain_ganti = "https://poop.skin"  # Replace with your target domain
 
 try:
     with open('output_link.txt', 'r') as file:
@@ -152,14 +154,24 @@ def extract_download_link(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
     script_tag = soup.find('script', string=lambda t: 'fetchDirectLink' in t if t else False)
 
+
     if script_tag:
-        download_link_start = script_tag.string.find("https://pay.kininews.co/download_hashed.php?key=")
-        if download_link_start != -1:
-            download_link_end = script_tag.string.find('"', download_link_start)
-            if download_link_end != -1:
-                download_link = script_tag.string[download_link_start:download_link_end]
-                return download_link
+        # Menggunakan regex untuk mencari URL dalam fungsi fetchDirectLink
+        match = re.search(r'https?://[^\s]+/\w+\.php\?key=[\w\d]+', script_tag.string)
+        if match:
+            print("Found download link:", match.group(0))
+            return match.group(0)  # Mengembalikan URL yang ditemukan
     return None
+
+
+    # if script_tag:
+    #     download_link_start = script_tag.string.find("https://mba.dog/download_hashed.php?key=")
+    #     if download_link_start != -1:
+    #         download_link_end = script_tag.string.find('"', download_link_start)
+    #         if download_link_end != -1:
+    #             download_link = script_tag.string[download_link_start:download_link_end]
+    #             return download_link
+    # return None
 
 def extract_authorization_token(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -234,7 +246,6 @@ def exmain():
                 response.raise_for_status()
 
                 download_url = extract_download_link(response.text)
-
                 if not download_url:
                     print(f"No download.php link found in {url}")
                     total_errors += 1

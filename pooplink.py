@@ -4,7 +4,7 @@ from Crypto.Util.Padding import pad
 import base64
 import httpx
 
-domain_ganti = "https://poop.skin"  # Replace with your target domain
+domain_ganti = "https://poo.phd"  # Replace with your target domain
 
 try:
     with open('link.txt', 'r') as file:
@@ -57,13 +57,21 @@ def extract_download_link(html_content):
     script_tag = soup.find('script', string=lambda t: 'fetchDirectLink' in t if t else False)
 
     if script_tag:
-        download_link_start = script_tag.string.find("https://pay.kininews.co/download_hashed.php?key=")
-        if download_link_start != -1:
-            download_link_end = script_tag.string.find('"', download_link_start)
-            if download_link_end != -1:
-                download_link = script_tag.string[download_link_start:download_link_end]
-                return download_link
+        # Menggunakan regex untuk mencari URL dalam fungsi fetchDirectLink
+        match = re.search(r'https?://[^\s]+/\w+\.php\?key=[\w\d]+', script_tag.string)
+        if match:
+            print("Found download link:", match.group(0))
+            return match.group(0)  # Mengembalikan URL yang ditemukan
     return None
+
+    # if script_tag:
+    #     download_link_start = script_tag.string.find("https://mba.dog/download_hashed.php?key=")
+    #     if download_link_start != -1:
+    #         download_link_end = script_tag.string.find('"', download_link_start)
+    #         if download_link_end != -1:
+    #             download_link = script_tag.string[download_link_start:download_link_end]
+    #             return download_link
+    # return None
 
 def extract_authorization_token(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')

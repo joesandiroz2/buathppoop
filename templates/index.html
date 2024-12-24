@@ -44,7 +44,8 @@
                     name="link_data" id="link_data" class="materialize-textarea" placeholder="Masukkan link di sini..."></textarea>
                     <label for="link_data">Link</label>
                 </div>
-                <button type="submit" class="btn waves-effect waves-light">Save</button>
+                 <button type="button" class="btn waves-effect red waves-light" id="hapuslink">Bersihkan </button>
+                <button type="submit" class="btn waves-effect btn-large blue waves-light">Save</button>
             </form>
         </div>
 
@@ -97,6 +98,22 @@ document.getElementById('start-extract').onclick = function() {
     this.disabled = true; // Nonaktifkan tombol setelah memulai
     document.getElementById('process-status').innerHTML = ''; // Reset status
 };
+
+    document.getElementById('hapuslink').onclick = function() {
+        const linkDataTextarea = document.getElementById('link_data');
+        const linkData = linkDataTextarea.value;
+
+        // Regex untuk menemukan semua link yang dimulai dengan https://
+        const validLinks = linkData.match(/https:\/\/[^\s]+/g);
+
+        // Jika ada link yang valid, gabungkan dan tampilkan di textarea
+        if (validLinks) {
+            linkDataTextarea.value = validLinks.join('\n');
+        } else {
+            linkDataTextarea.value = ''; // Jika tidak ada link valid, kosongkan textarea
+        }
+    };
+
 
         // Mulai proses ketika tombol diklik
         document.getElementById('start-button').onclick = function() {
