@@ -260,7 +260,7 @@ try:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
 
             # turboviplay request
-            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": streamhg_api_key, "url": new_url})
+            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": turboviplay_key, "url": new_url})
             if response_turboviplay.status_code == 200:
                 success_count += 1
             else:
