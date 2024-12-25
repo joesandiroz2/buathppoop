@@ -38,14 +38,16 @@
         <div class="col s12 m4 l4 ">
             <h6>Extract /f/ poophd</h6>
             <form method="POST">
+             <button type="button" class="btn waves-effect red waves-light" id="hapuslink">Bersihkan </button>
+                <button type="submit" class="btn waves-effect btn-large blue waves-light">Save</button>
+                <p id="total-links">Total link: 0</p>
                 <div class="input-field">
                     <textarea 
                       style="border:3px solid black;height:250px" 
                     name="link_data" id="link_data" class="materialize-textarea" placeholder="Masukkan link di sini..."></textarea>
                     <label for="link_data">Link</label>
                 </div>
-                 <button type="button" class="btn waves-effect red waves-light" id="hapuslink">Bersihkan </button>
-                <button type="submit" class="btn waves-effect btn-large blue waves-light">Save</button>
+                
             </form>
         </div>
 
@@ -119,7 +121,22 @@ document.getElementById('start-extract').onclick = function() {
         }
     };
 
+    document.getElementById('link_data').addEventListener('input', function() {
+            const linkData = this.value.split('\n'); // Pisahkan berdasarkan baris
+            let totalLinks = 0;
 
+            linkData.forEach(line => {
+                const validLinks = line.match(/https:\/\/[^\s]+/g); // Temukan link valid di setiap baris
+                if (validLinks) {
+                    totalLinks += validLinks.length; // Tambahkan jumlah link valid
+                }
+            });
+
+            document.getElementById('total-links').innerText = `Total link: ${totalLinks}`; // Tampilkan total link
+        });
+
+
+    
         // Mulai proses ketika tombol diklik
         document.getElementById('start-button').onclick = function() {
             socket.emit('start_process');

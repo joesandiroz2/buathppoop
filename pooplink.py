@@ -209,7 +209,7 @@ def encrypt_url(url, key):
 # API Keys
 dood_api_key = '219725bbkborbourrp2cd4'
 lulustream_api_key = '936yclje4cl5mud6kcw'  # Lulustream API Key
-streamhg_api_key = "32zasu667srtcygcrm"
+streamhg_api_key = "261zkhuzui2h29wyup6"
 turboviplay_api_key = "FOzGBxlRyM"
 
 
@@ -260,7 +260,7 @@ try:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
 
             # turboviplay request
-            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": turboviplay_key, "url": new_url})
+            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": turboviplay_api_key, "url": new_url})
             if response_turboviplay.status_code == 200:
                 success_count += 1
             else:
