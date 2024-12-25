@@ -115,22 +115,39 @@
     <script>
         const socket = io();
 
-function uploadToDood(apiKey, url, doodNumber) {
-     let cors_any = localStorage.getItem('cors_any') || "https://darenx-corsanywhere6.hf.space";
-
+   function uploadToDood(apiKey, url, doodNumber) {
+    let cors_any = localStorage.getItem('cors_any') || "https://darenx-corsanywhere6.hf.space";
     const apiUrl = `${cors_any}/https://doodapi.com/api/upload/url?key=${apiKey}&url=${encodeURIComponent(url)}`;
-    console.log(apiUrl)
+    console.log(apiUrl);
     fetch(apiUrl)
         .then(response => response.json())
         .then(data => {
-            // Tampilkan SweetAlert untuk hasil upload
-            swal("Sukses!", `Upload ke Dood ${doodNumber} berhasil: ${url}`, "success");
+            const filecode = data.result.filecode;
+            // Request info using filecode
+            fetch(`${cors_any}/https://doodapi.com/api/file/info?key=${apiKey}&file_code=${filecode}`)
+                .then(response => response.json())
+                .then(infoData => {
+                    const { title, single_img, protected_dl } = infoData.result[0];
+                    const linkElement = document.createElement('div');
+                    linkElement.innerHTML = `
+                        <h6>Dood ${doodNumber}:</h6>
+                        <img src="${single_img}" alt="Thumbnail" style="width: 120px; height: auto;">
+                        <p>${title}</p>
+                        <p><a href="https://doodstream.co${protected_dl}" target="_blank">https://doodstream.co${protected_dl}</a></p>
+                    `;
+                    document.getElementById('doodoutput').appendChild(linkElement);
+                    swal("Sukses!", `Upload ke Dood ${doodNumber} berhasil: ${url}`, "success");
+                })
+                .catch(error => {
+                    console.error(`Error fetching file info for Dood ${doodNumber}:`, error);
+                    swal("Gagal!", `Terjadi kesalahan saat mengambil informasi file untuk Dood ${doodNumber}.`, "error");
+                });
         })
         .catch(error => {
             console.error(`Error uploading to Dood ${doodNumber}:`, error);
             swal("Gagal!", `Terjadi kesalahan saat mengupload ke Dood ${doodNumber}.`, "error");
         });
-}
+        }
 
 
     document.getElementById('simpanstorage').onclick = function() {
@@ -209,9 +226,7 @@ document.getElementById('start-extract').onclick = function() {
     // Dengarkan output dari server untuk Dood Extract
     socket.on('dood_extract_output', function(data) {
     console.log("Received Dood Extract Output:", data); // Log untuk debugging
-    const doodOutputDiv = document.getElementById('doodoutput');
-    doodOutputDiv.innerHTML = ''; // Kosongkan sebelumnya
-    let totalDood = 0; 
+   let totalDood = 0; 
 
      // Ambil nilai dari localStorage
     const savedData = localStorage.getItem('dood-key');
@@ -232,7 +247,6 @@ document.getElementById('start-extract').onclick = function() {
         link.style.display = 'block'; // Tampilkan setiap tautan di baris baru
         link.style.marginBottom = '10px'; // Tambahkan margin bawah untuk pemisahan
 
-        doodOutputDiv.appendChild(link); // Tambahkan tautan ke div
          totalDood++;
           uploadToDood(dood1Value, result.iframe_src, '1');
         uploadToDood(dood2Value, result.iframe_src, '2');
