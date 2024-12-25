@@ -94,6 +94,22 @@ def run_extract_process():
 
     # Emit event ketika proses selesai
     socketio.emit('process_complete', {'results': results, 'type': 'extract'})  # Tambahkan type
-    
+
+@socketio.on('dood_extract')
+def start_dood_extract():
+    # Start the dood extract process in a separate thread
+    thread = threading.Thread(target=run_dood_extract_process)
+    thread.start()
+
+def run_dood_extract_process():
+    # Import the convert_dood function from doodextract.py
+    from doodextract import convert_dood
+
+    # Call the convert_dood function and get the results
+    results = convert_dood()
+
+    # Emit the results back to the client
+    socketio.emit('dood_extract_output', {'results': results})
+     
 if __name__ == '__main__':
     socketio.run(app, debug=True)

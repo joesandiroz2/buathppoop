@@ -7,6 +7,10 @@
     <!-- Materialize CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <!-- SweetAlert JS -->
+    <!-- SweetAlert CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
     <style>
         body {
             background-color: #f0f0f0; /* Warna latar belakang abu-abu */
@@ -49,6 +53,16 @@
                 </div>
                 
             </form>
+            <p>isi cors any di doodbarengan </p>
+            <div class="card blue lighten-3">
+                dood 1 : <input type="text" id="dood1">
+                <p>dood 2</p>
+                <input type="text" id="dood2">
+                <button id="simpanstorage"class="btn waves pink">simpan</button>
+            </div>
+            <span id="total-dood">total dood : </span>
+            <div id="doodoutput" class="black white-text"></div>
+
         </div>
 
         <div class="col s12 m3 l3">
@@ -58,7 +72,8 @@
 
                 <button id="start-extract" class="btn green waves-effect waves-light btn-large">Extract /d/ </button>
 
-
+                <button id="dood-extract" class="btn  waves-effect waves-light orange darken-3 btn-large">Dood Extract </button>
+  
                 <div id="process-status" class="success-message"></div> <!-- Tempat untuk menampilkan status proses -->
                 <ul class="collection">
                     {% if preview_links %}
@@ -94,11 +109,59 @@
            ></iframe>
         </div>
     </div>
-
+    
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
         const socket = io();
+
+function uploadToDood(apiKey, url, doodNumber) {
+     let cors_any = localStorage.getItem('cors_any') || "https://darenx-corsanywhere6.hf.space";
+
+    const apiUrl = `${cors_any}/https://doodapi.com/api/upload/url?key=${apiKey}&url=${encodeURIComponent(url)}`;
+    console.log(apiUrl)
+    fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            // Tampilkan SweetAlert untuk hasil upload
+            swal("Sukses!", `Upload ke Dood ${doodNumber} berhasil: ${url}`, "success");
+        })
+        .catch(error => {
+            console.error(`Error uploading to Dood ${doodNumber}:`, error);
+            swal("Gagal!", `Terjadi kesalahan saat mengupload ke Dood ${doodNumber}.`, "error");
+        });
+}
+
+
+    document.getElementById('simpanstorage').onclick = function() {
+    // Ambil nilai dari input
+    const dood1Value = document.getElementById('dood1').value;
+    const dood2Value = document.getElementById('dood2').value;
+
+    // Buat objek untuk disimpan
+    const doodData = {
+        dood1: dood1Value,
+        dood2: dood2Value
+    };
+
+    // Simpan ke localStorage
+    localStorage.setItem('dood-key', JSON.stringify(doodData));
+
+    // Tampilkan SweetAlert
+    swal("Sukses!", "Data telah disimpan!", "success");
+};
+
+// Cek localStorage saat halaman dimuat
+window.onload = function() {
+    const savedData = localStorage.getItem('dood-key');
+    if (savedData) {
+        const doodData = JSON.parse(savedData);
+        document.getElementById('dood1').value = doodData.dood1 || ''; // Set value input dood1
+        document.getElementById('dood2').value = doodData.dood2 || ''; // Set value input dood2
+    }
+};
+
+
 
         // Mulai proses extract ketika tombol diklik
 document.getElementById('start-extract').onclick = function() {
@@ -136,8 +199,52 @@ document.getElementById('start-extract').onclick = function() {
             document.getElementById('total-links').innerText = `Total link: ${totalLinks}`; // Tampilkan total link
         });
 
+        document.getElementById('dood-extract').onclick = function() {
+        // Emit event untuk memulai proses Dood Extract
+        socket.emit('dood_extract'); // Anda perlu menyesuaikan ini dengan server Anda
+        this.disabled = true; // Nonaktifkan tombol setelah memulai
+        document.getElementById('process-status').innerHTML = ''; // Reset status
+    };
 
-    
+    // Dengarkan output dari server untuk Dood Extract
+    socket.on('dood_extract_output', function(data) {
+    console.log("Received Dood Extract Output:", data); // Log untuk debugging
+    const doodOutputDiv = document.getElementById('doodoutput');
+    doodOutputDiv.innerHTML = ''; // Kosongkan sebelumnya
+    let totalDood = 0; 
+
+     // Ambil nilai dari localStorage
+    const savedData = localStorage.getItem('dood-key');
+    let dood1Value = '';
+    let dood2Value = '';
+    if (savedData) {
+        const doodData = JSON.parse(savedData);
+        dood1Value = doodData.dood1; // Ambil nilai dood1
+        dood2Value = doodData.dood2; // Ambil nilai dood2
+    }
+
+    data.results.forEach(result => {
+        // Buat elemen <a>
+        const link = document.createElement('a');
+        link.href = result.iframe_src; // Ambil iframe_src dari hasil
+        link.textContent = result.iframe_src; // Tampilkan URL sebagai teks tautan
+        link.target = '_blank'; // Buka tautan di tab baru
+        link.style.display = 'block'; // Tampilkan setiap tautan di baris baru
+        link.style.marginBottom = '10px'; // Tambahkan margin bawah untuk pemisahan
+
+        doodOutputDiv.appendChild(link); // Tambahkan tautan ke div
+         totalDood++;
+          uploadToDood(dood1Value, result.iframe_src, '1');
+        uploadToDood(dood2Value, result.iframe_src, '2');
+    });
+
+    // Aktifkan kembali tombol Dood Extract dan tampilkan pesan
+    document.getElementById('total-dood').innerText = `Total Dood: ${totalDood}`;
+    const doodExtractButton = document.getElementById('dood-extract');
+    doodExtractButton.disabled = false; // Aktifkan kembali tombol
+    document.getElementById('process-status').innerHTML = 'Proses sudah selesai'; // Tampilkan pesan
+});
+
         // Mulai proses ketika tombol diklik
         document.getElementById('start-button').onclick = function() {
             socket.emit('start_process');
