@@ -17,6 +17,24 @@ with open('output_link.txt', 'w') as file:
 with open(OUTPUT_FILE, 'w') as file:
     pass  # Tidak ada isi, hanya membuat file kosong
 
+
+@app.route('/save_links', methods=['POST'])
+def save_links():
+    links = request.json.get('links', [])
+    with open(LINK_FILE, 'w') as f:
+        for link in links:
+            f.write(link + '\n')  # Tulis setiap link ke file
+    return {'status': 'success', 'links': links}, 200  # Kembalikan status dan link yang disimpan
+
+
+@app.route('/output_link.txt')
+def output_link():
+    with open('output_link.txt', 'r') as file:
+        content = file.read()  # Baca isi file
+    return content, 200, {'Content-Type': 'text/plain'}  # Kembalikan isi file dengan status 200
+
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     preview_links = []
@@ -110,6 +128,6 @@ def run_dood_extract_process():
 
     # Emit the results back to the client
     socketio.emit('dood_extract_output', {'results': results})
-     
+
 if __name__ == '__main__':
     socketio.run(app, debug=True)
