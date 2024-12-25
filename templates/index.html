@@ -54,6 +54,12 @@
         <div class="col s12 m3 l3">
             <div class="preview">
                 <h5>Preview Links:</h5>
+                <button id="start-button" class="btn red waves-effect waves-light btn-large">Proses /f/</button>
+
+                <button id="start-extract" class="btn green waves-effect waves-light btn-large">Extract /d/ </button>
+
+
+                <div id="process-status" class="success-message"></div> <!-- Tempat untuk menampilkan status proses -->
                 <ul class="collection">
                     {% if preview_links %}
                         {% for link in preview_links %}
@@ -63,12 +69,7 @@
                         <li class="collection-item">Tidak ada link yang disimpan.</li>
                     {% endif %}
                 </ul>
-                <button id="start-button" class="btn red waves-effect waves-light btn-large">Proses /f/</button>
-
-                <button id="start-extract" class="btn green waves-effect waves-light btn-large">Extract /d/ </button>
-
-
-                <div id="process-status" class="success-message"></div> <!-- Tempat untuk menampilkan status proses -->
+                
             </div>
         </div>
 
