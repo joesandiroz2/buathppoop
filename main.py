@@ -10,6 +10,7 @@ socketio = SocketIO(app)  # Inisialisasi SocketIO
 # Nama file untuk menyimpan data
 LINK_FILE = 'link.txt'
 OUTPUT_FILE = 'zfinal_hasil.txt'
+RACATY_OUTPUT = 'racatyoutput.txt'
 
 
 with open('output_link.txt', 'w') as file:
@@ -78,9 +79,17 @@ def run_process():
     with open(OUTPUT_FILE, 'r') as f:
         results = f.read().splitlines()  # Baca setiap baris
 
+    with open(RACATY_OUTPUT, 'w') as racaty_file:
+        racaty_file.write('\n'.join(results))
+
+    subprocess.run(['python3', 'racatyproses.py'])
+
 
     # Emit event ketika proses selesai
     socketio.emit('process_complete',{'results': results})
+
+
+
 
 @socketio.on('start_process')
 def start_process():
@@ -109,9 +118,17 @@ def run_extract_process():
     with open('output_link.txt', 'r') as f:
         results = f.read().splitlines()  # Baca setiap baris
 
+    with open(RACATY_OUTPUT, 'w') as racaty_file:
+        racaty_file.write('\n'.join(results))
+
+    subprocess.run(['python3', 'racatyproses.py'])
+
 
     # Emit event ketika proses selesai
     socketio.emit('process_complete', {'results': results, 'type': 'extract'})  # Tambahkan type
+
+
+
 
 @socketio.on('dood_extract')
 def start_dood_extract():

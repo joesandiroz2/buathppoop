@@ -310,7 +310,7 @@ def encrypt_url(url, key):
 # API Keys
 dood_api_key = '219725bbkborbourrp2cd4'
 lulustream_api_key = '936yclje4cl5mud6kcw'  # Lulustream API Key
-streamhg_api_key = "261zkhuzui2h29wyup6"
+streamhg_api_key = "291959xu8erref8zbc28jx"
 turboviplay_key = "FOzGBxlRyM"
 
 
@@ -318,7 +318,7 @@ key = "mysecretkey12345"  # Kunci AES untuk enkripsi
 dood_api_endpoint = "https://doodapi.com/api/upload/url"
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
 
-streamhg_api_endpoint = "https://bigwarp.io/api/upload/url"
+streamhg_api_endpoint = dood_api_endpoint
 turboviplay_api_endpoint = "https://api.turboviplay.com/uploadUrl"
 
 
