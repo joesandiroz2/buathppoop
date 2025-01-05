@@ -34,6 +34,13 @@ def output_link():
         content = file.read()  # Baca isi file
     return content, 200, {'Content-Type': 'text/plain'}  # Kembalikan isi file dengan status 200
 
+@app.route('/zfinal_hasil.txt')
+def output_zfinal():
+    with open('zfinal_hasil.txt', 'r') as file:
+        content = file.read()  # Baca isi file
+        print(content)
+    return content, 200, {'Content-Type': 'text/plain'}  # Kembalikan isi file dengan status 200
+
 
 
 @app.route('/', methods=['GET', 'POST'])

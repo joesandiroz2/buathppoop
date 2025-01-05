@@ -95,6 +95,8 @@
             <div class="card ">
                 <button class="btn green" id="kirim-preview">Kirim ke Preview Link</button>
                 <button class="btn blue" id="tampilkan-output">Tampilkan output_link.txt</button>
+                 <button class="btn red" id="tampilkan-zfinal">Tampilkan zfinal_hasil.txt</button>
+               
                 <textarea 
                 style="border:3px solid black;width: 100%;height: 300px;" 
                 id="output-textarea" readonly></textarea>
@@ -103,6 +105,12 @@
     </div>
 
     <div class="row">
+        <div class="container">
+            <button
+            id="copyhasil"
+           class="btn btn-large red bold-text"
+            >Copy Hasil</button>
+        </div>
         <div class="col s12 m4 l4">
             <h5>Hasil \f\:</h5>
             <textarea id="outputtxt" style="border:3px solid black; height:500px; width:100%;" readonly></textarea>
@@ -165,7 +173,67 @@
                 });
         };
 
+     document.getElementById('tampilkan-zfinal').onclick = function() {
+            fetch('/zfinal_hasil.txt')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('output-textarea').value = data; // Tampilkan isi file di textarea
+                })
+                .catch(error => {
+                    console.error('Error fetching output_link.txt:', error);
+                    swal("Gagal!", "Terjadi kesalahan saat mengambil file output_link.txt.", "error");
+                });
+        };
+    
 
+document.getElementById('copyhasil').addEventListener('click', function() {
+    // Ambil teks dari textarea
+    const outputText = document.getElementById('outputtxt').value;
+
+    if (!outputText.trim()) {
+        alert('Textarea kosong! Tidak ada yang disalin.');
+        return; // Hentikan proses jika textarea kosong
+    }
+
+    // Fungsi untuk menyalin teks ke clipboard
+    function copyToClipboard(text) {
+        if (navigator.clipboard) {
+            // Jika browser mendukung navigator.clipboard
+            return navigator.clipboard.writeText(text)
+                .then(() => true) // Berhasil
+                .catch(() => false); // Gagal
+        } else {
+            // Fallback untuk browser lama
+            const textarea = document.createElement('outputtxt');
+            textarea.value = text;
+            textarea.style.position = 'fixed'; // Letakkan di luar layar
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                const success = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                return success;
+            } catch (error) {
+                document.body.removeChild(textarea);
+                return false;
+            }
+        }
+    }
+
+    // Salin teks ke clipboard
+    copyToClipboard(outputText)
+        .then((success) => {
+            if (success) {
+                alert('Berhasil disalin ke clipboard!');
+            } else {
+                alert('Gagal menyalin teks ke clipboard.');
+            }
+        })
+        .catch((error) => {
+            console.error('Gagal menyalin teks: ', error);
+            alert('Terjadi kesalahan saat menyalin teks.');
+        });
+});
 
    function uploadToDood(apiKey, url, doodNumber) {
     let cors_any = localStorage.getItem('cors_any') || "https://darenx-corsanywhere6.hf.space";
