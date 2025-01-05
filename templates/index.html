@@ -74,7 +74,9 @@
 
                 <button id="dood-extract" class="btn  waves-effect waves-light orange darken-3 btn-large">Dood Extract </button>
   
-                <div id="process-status" class="success-message"></div> <!-- Tempat untuk menampilkan status proses -->
+                <div id="process-status" class="success-message"></div>
+                    <span id="totallinkpreview" class="bold-text center-align" style="font-weight: bold;"></span>
+                 <!-- Tempat untuk menampilkan status proses -->
                 <ul class="collection">
                     {% if preview_links %}
                         {% for link in preview_links %}
@@ -131,6 +133,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
         const socket = io();
+     function updateTotalLinkPreview() {
+            const linkItems = document.querySelectorAll('ul.collection li');
+            const totalLinks = linkItems.length;
+            const totalLinkPreview = document.getElementById('totallinkpreview');
+            if (totalLinkPreview) {
+                totalLinkPreview.textContent = `Total link: ${totalLinks}`;
+            }
+        }
+     document.addEventListener('DOMContentLoaded', function() {
+            updateTotalLinkPreview();
+        });
 
      document.getElementById('kirim-preview').addEventListener('click', function() {
             const outputText = document.getElementById('output-textarea').value;
