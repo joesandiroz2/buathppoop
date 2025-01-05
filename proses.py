@@ -314,6 +314,8 @@ dood2_api_key = "291959xu8erref8zbc28jx"
 turboviplay_key = "FOzGBxlRyM"
 streamhg_api_key = "2426evezy9bm5xz0uzzy"
 
+
+
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
 dood_api_endpoint = "https://doodapi.com/api/upload/url"
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
