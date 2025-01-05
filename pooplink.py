@@ -3,8 +3,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 import base64
 import httpx
-
-domain_ganti = "https://poo.phd"  # Replace with your target domain
+from domain_ganti import domain_ganti
 
 try:
     with open('link.txt', 'r') as file:
@@ -209,15 +208,16 @@ def encrypt_url(url, key):
 # API Keys
 dood_api_key = '219725bbkborbourrp2cd4'
 lulustream_api_key = '936yclje4cl5mud6kcw'  # Lulustream API Key
-streamhg_api_key = "291959xu8erref8zbc28jx"
-turboviplay_api_key = "FOzGBxlRyM"
-
+dood2_api_key = "291959xu8erref8zbc28jx"
+turboviplay_key = "FOzGBxlRyM"
+streamhg_api_key = "2426evezy9bm5xz0uzzy"
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
 dood_api_endpoint = "https://doodapi.com/api/upload/url"
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
-streamhg_api_endpoint = dood_api_endpoint
+streamhg_api_endpoint = "https://streamhgapi.com/api/upload/url"
 
+dood2_api_endpoint = dood_api_endpoint
 turboviplay_api_endpoint = "https://api.turboviplay.com/uploadUrl"
 
 
@@ -252,16 +252,23 @@ try:
             else:
                 print(f"Failed: {url} - Lulustream Response: {response_lulustream.status_code} - {response_lulustream.text}")
 
-            # streamhg request
-            response_lulustream = httpx.get(streamhg_api_endpoint, params={"key": streamhg_api_key, "url": new_url})
-            if response_lulustream.status_code == 200:
+            # dood2 request
+            response_dood2 = httpx.get(dood2_api_endpoint, params={"key": dood2_api_key, "url": new_url})
+            if response_dood2.status_code == 200:
                 success_count += 1
             else:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
 
             # turboviplay request
-            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": turboviplay_api_key, "url": new_url})
+            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": turboviplay_key, "url": new_url})
             if response_turboviplay.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
+
+            # streamhg request
+            response_streamhg = httpx.get(streamhg_api_endpoint, params={"key": streamhg_api_key, "url": new_url})
+            if response_streamhg.status_code == 200:
                 success_count += 1
             else:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
