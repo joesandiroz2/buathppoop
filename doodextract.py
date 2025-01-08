@@ -3,7 +3,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 import cloudscraper
-
+from domain_ganti import domain_ganti
 def convert_dood():
     results = []
     num_found = 0  # Counter for number of direct links found
@@ -14,18 +14,32 @@ def convert_dood():
         with open(file_path, 'r') as file:
             urls = file.readlines()  # Membaca semua baris dari file
             print(urls)
+
+        for url in urls:
+            # Menghapus whitespace di awal dan akhir
+            url = url.strip()
+            if url:  # Pastikan URL tidak kosong
+                # Ganti domain lama dengan domain baru
+                # Asumsi bahwa URL dimulai dengan http:// atau https://
+                if url.startswith("http://") or url.startswith("https://"):
+                    new_url = domain_ganti + url[url.find('/', url.find('//') + 2):]
+                else:
+                    new_url = domain_ganti + '/' + url  # Jika tidak ada skema, tambahkan '/'
+                results.append(new_url)
+                num_found += 1
+
     else:
         return {"error": "File link.txt tidak ditemukan."}
 
     scraper = cloudscraper.create_scraper()  # Create a Cloudscraper instance
-
+    print(scraper)
     for url in urls:
         url = url.strip()  # Clean up whitespace around URL
         if not url:
             continue  # Skip empty URLs
         
         headers = {
-            "User -Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0"
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0"
         }
         try:
             response = scraper.get(url, headers=headers)
@@ -36,6 +50,7 @@ def convert_dood():
 
             # Find all <script> tags
             script_tags = soup.find_all('script')
+            print(script_tags)
             found_id = None
             found_url = None
             found_length_id = None
