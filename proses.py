@@ -314,6 +314,7 @@ dood2_api_key = "291959xu8erref8zbc28jx"
 turboviplay_key = "FOzGBxlRyM"
 streamhg_api_key = "2426evezy9bm5xz0uzzy"
 veev_api_key = "81wfq1eryrdlombkfrej2ldx08p092x1rw"
+vinovo_api_key = "8b857a827319ed70f22e4d0668853f"
 
 
 
@@ -325,6 +326,7 @@ veev_api_endpoint  = "https://veev.to/api/upload/url"
 
 dood2_api_endpoint = dood_api_endpoint
 turboviplay_api_endpoint = "https://api.turboviplay.com/uploadUrl"
+vinovo_api_endpoint  = "https://api.vinovo.si/api/upload/url"
 
 
 # Variabel untuk menghitung jumlah sukses
@@ -382,6 +384,13 @@ try:
             # veev request
             response_veev = httpx.get(veev_api_endpoint, params={"key": veev_api_key, "url": new_url})
             if response_veev.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
+
+            # vinovo request
+            response_vinovo = httpx.get(vinovo_api_endpoint, params={"key": vinovo_api_key, "url": url})
+            if response_vinovo.status_code == 200:
                 success_count += 1
             else:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
