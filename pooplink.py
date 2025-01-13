@@ -209,7 +209,6 @@ def encrypt_url(url, key):
 dood_api_key = '219725bbkborbourrp2cd4'
 lulustream_api_key = '936yclje4cl5mud6kcw'  # Lulustream API Key
 dood2_api_key = "291959xu8erref8zbc28jx"
-turboviplay_key = "FOzGBxlRyM"
 streamhg_api_key = "2426evezy9bm5xz0uzzy"
 veev_api_key = "81wfq1eryrdlombkfrej2ldx08p092x1rw"
 vinovo_api_key = "8b857a827319ed70f22e4d0668853f"
@@ -224,7 +223,6 @@ vinovo_api_endpoint  = "https://api.vinovo.si/api/upload/url"
 
 
 dood2_api_endpoint = dood_api_endpoint
-turboviplay_api_endpoint = "https://api.turboviplay.com/uploadUrl"
 
 
 # Variabel untuk menghitung jumlah sukses
@@ -265,13 +263,7 @@ try:
             else:
                 print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
 
-            # turboviplay request
-            response_turboviplay = httpx.get(turboviplay_api_endpoint, params={"keyApi": turboviplay_key, "url": new_url})
-            if response_turboviplay.status_code == 200:
-                success_count += 1
-            else:
-                print(f"Failed: {url} - earnvids Response: {response_lulustream.status_code} - {response_lulustream.text}")
-
+           
             # streamhg request
             response_streamhg = httpx.get(streamhg_api_endpoint, params={"key": streamhg_api_key, "url": new_url})
             if response_streamhg.status_code == 200:
