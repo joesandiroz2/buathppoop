@@ -1,3 +1,15 @@
+from racaty_upload import racaty_upload
+
+try:
+    # upload racaty
+    print("Starting racaty_upload zfinal hasil...")
+    racaty_upload("zfinal_hasil.txt")
+    print("racaty_upload completed. Continuing with the rest of the code...")
+except Exception as e:
+    print(f"Error during racaty_upload: {e}")
+
+
+
 import base64
 import httpx
 

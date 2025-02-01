@@ -1,8 +1,22 @@
+from racaty_upload import racaty_upload
+
+try:
+    # upload racaty
+    print("Starting racaty_upload upload_link.txt ...")
+    racaty_upload("output_link.txt")
+    print("racaty_upload completed. Continuing with the rest of the code...")
+except Exception as e:
+    print(f"Error during racaty_upload: {e}")
+
+
+
 import base64
 import httpx
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
+
+
 # Lanjutkan eksekusi kode
 def encrypt_url(url, key):
     # Pastikan kunci adalah 16-byte
@@ -38,6 +52,8 @@ dood2_api_endpoint = dood_api_endpoint
 
 # Variabel untuk menghitung jumlah sukses
 success_count = 0
+
+
 
 # Read URLs from output.txt
 try:
@@ -101,6 +117,8 @@ try:
                 print(f"Failed: {url} - Veev Response: {response_veev.status_code} - {response_veev.text}")
         except Exception as e:
             print(f"Error during Veev request for {new_url}: {e}")
+
+        
 
         try:
             # vinovo request
