@@ -8,9 +8,10 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <!-- SweetAlert JS -->
-    <!-- SweetAlert CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+
     <style>
         body {
             background-color: #f0f0f0; /* Warna latar belakang abu-abu */
@@ -43,6 +44,9 @@
             <h6>Extract /f/ poophd</h6>
             <form method="POST">
              <button type="button" class="btn waves-effect red waves-light" id="hapuslink">Bersihkan </button>
+
+             <button type="button" class="btn waves-effect orange waves-light" id="upload_racaty">upload Racaty </button>
+
                 <button type="submit" class="btn waves-effect btn-large blue waves-light">Save</button>
                 <p id="total-links">Total link: 0</p>
                 <div class="input-field">
@@ -130,7 +134,12 @@
     </div>
     
     <!-- Materialize JS -->
+    <script
+  src="https://code.jquery.com/jquery-3.7.1.js"
+  integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+  crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+ 
     <script>
         const socket = io();
      function updateTotalLinkPreview() {
@@ -143,6 +152,57 @@
         }
      document.addEventListener('DOMContentLoaded', function() {
             updateTotalLinkPreview();
+
+      document.getElementById('upload_racaty').addEventListener('click', function() {
+        // Nonaktifkan tombol upload
+        this.disabled = true;
+
+        // Get the link data from the textarea
+        const linkData = document.getElementById('link_data').value;
+
+        // Show SweetAlert2 confirmation
+        Swal.fire({
+            title: 'Konfirmasi',
+            text: 'Apakah Anda yakin ingin menyimpan link ini?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send the link data to the server
+                fetch('/save_racaty_links', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ links: linkData.split('\n') })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire('Sukses!', 'Link berhasil disimpan!', 'success');
+                    } else {
+                        Swal.fire('Gagal!', 'Terjadi kesalahan saat menyimpan link.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Gagal!', 'Terjadi kesalahan saat menyimpan link.', 'error');
+                })
+                .finally(() => {
+                    // Aktifkan kembali tombol upload setelah proses selesai
+                    document.getElementById('link_data').value = ''; 
+                    this.disabled = false;
+                });
+            } else {
+                document.getElementById('link_data').value = ''; 
+                // Jika pengguna membatalkan, aktifkan kembali tombol upload
+                this.disabled = false;
+            }
+        });
+    });
+
         });
 
      document.getElementById('kirim-preview').addEventListener('click', function() {

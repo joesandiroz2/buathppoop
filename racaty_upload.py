@@ -53,7 +53,7 @@ def racaty_upload(file_path):
         if filename:
             title = filename  # Gunakan nama file sebagai judul
         else:
-            title = f"bokep {index + 1}"  # Fallback jika tidak bisa mengekstrak nama file
+            title = f"bokep Ngentot {index + 1}"  # Fallback jika tidak bisa mengekstrak nama file
         
         
         status_code, response_text = perform_curl_request(title, url)

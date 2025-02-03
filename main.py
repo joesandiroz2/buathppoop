@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,jsonify
 import os
 import subprocess
 import threading
 from flask_socketio import SocketIO, emit
+from racaty_upload import racaty_upload
 
 app = Flask(__name__)
 socketio = SocketIO(app)  # Inisialisasi SocketIO
@@ -10,12 +11,31 @@ socketio = SocketIO(app)  # Inisialisasi SocketIO
 # Nama file untuk menyimpan data
 LINK_FILE = 'link.txt'
 OUTPUT_FILE = 'zfinal_hasil.txt'
+RACATY_LINK_FILE = 'racaty_link.txt'
 
 
 with open('output_link.txt', 'w') as file:
     pass  # Tidak ada isi, hanya membuat file kosong
 with open(OUTPUT_FILE, 'w') as file:
     pass  # Tidak ada isi, hanya membuat file kosong
+
+
+@app.route('/save_racaty_links', methods=['POST'])
+def save_racaty_links():
+    links = request.json.get('links', [])
+    overwrite = request.json.get('overwrite', False)  # Parameter untuk menentukan apakah akan menimpa data lama
+
+    try:
+        with open(RACATY_LINK_FILE, "w") as f:
+            for link in links:
+                if link.strip():  # Hanya simpan link yang tidak kosong
+                    f.write(link.strip() + '\n')  # Tulis setiap link ke file
+
+
+        racaty_upload(RACATY_LINK_FILE)
+        return jsonify({'status': 'success'}), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
 @app.route('/save_links', methods=['POST'])
