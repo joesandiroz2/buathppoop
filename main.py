@@ -3,7 +3,7 @@ import os
 import subprocess
 import threading
 from flask_socketio import SocketIO, emit
-from racaty_upload import racaty_upload
+from racaty_upload_by_slash_title import racaty_upload_slash
 
 app = Flask(__name__)
 socketio = SocketIO(app)  # Inisialisasi SocketIO
@@ -23,20 +23,32 @@ with open(OUTPUT_FILE, 'w') as file:
 @app.route('/save_racaty_links', methods=['POST'])
 def save_racaty_links():
     links = request.json.get('links', [])
-    overwrite = request.json.get('overwrite', False)  # Parameter untuk menentukan apakah akan menimpa data lama
+    overwrite = request.json.get('overwrite', False)
 
     try:
+        # Kosongkan file terlebih dahulu
         with open(RACATY_LINK_FILE, "w") as f:
+            f.truncate(0)  # Mengosongkan file
+
+        # Tulis data baru ke file
+        with open(RACATY_LINK_FILE, "a") as f:  # Gunakan mode append untuk menulis data baru
             for link in links:
                 if link.strip():  # Hanya simpan link yang tidak kosong
-                    f.write(link.strip() + '\n')  # Tulis setiap link ke file
+                    # Misalkan format link adalah "Judul - DoodStream/<>/URL"
+                    # Ambil judul dan URL dari link
+                    parts = link.split('/<>/')
+                    if len(parts) == 2:  # Pastikan ada dua bagian
+                        title = parts[0].strip()  # Ambil judul
+                        url = parts[1].strip()  # Ambil URL
+                        f.write(f"{title}/<>/{url}\n")  # Tulis judul dan link ke file
+                        print(f"{title} - {url}")
+                    else:
+                        print(f"Format tidak valid untuk link: {link}")
 
-
-        racaty_upload(RACATY_LINK_FILE)
+        racaty_upload_slash(RACATY_LINK_FILE)
         return jsonify({'status': 'success'}), 200
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
-
 
 @app.route('/save_links', methods=['POST'])
 def save_links():
