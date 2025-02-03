@@ -25,7 +25,7 @@ def perform_curl_request(title, url):
         'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
         'cache-control': 'max-age=0',
         'content-type': 'application/x-www-form-urlencoded',
-        'cookie': '_ga=GA1.1.1180926332.1735003220; _ga_3P0P07VSKJ=GS1.1.1738293727.3.1.1738293744.0.0.0; app_session=t8gbheb5i2hup6m9q8a0b0lecru9dkkc',
+        'cookie': '_ga=GA1.1.1180926332.1735003220; _ga_3P0P07VSKJ=GS1.1.1738293727.3.1.1738293744.0.0.0; app_session=svdtb2s5k3ubhe4agfjogrr4stsoicvt',
         'origin': 'https://new.racaty.my.id',
         'priority': 'u=0, i',
         'referer': 'https://new.racaty.my.id/upload',
@@ -53,7 +53,7 @@ def racaty_upload(file_path):
         if filename:
             title = filename  # Gunakan nama file sebagai judul
         else:
-            title = f"Video {index + 1}"  # Fallback jika tidak bisa mengekstrak nama file
+            title = f"bokep {index + 1}"  # Fallback jika tidak bisa mengekstrak nama file
         
         
         status_code, response_text = perform_curl_request(title, url)
