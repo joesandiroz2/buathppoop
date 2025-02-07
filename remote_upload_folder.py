@@ -3,7 +3,7 @@ from racaty_upload import racaty_upload
 try:
     # upload racaty
     print("Starting racaty_upload upload_link.txt ...")
-    racaty_upload("output_link.txt")
+    racaty_upload("zfinal_hasil.txt")
     print("racaty_upload completed. Continuing with the rest of the code...")
 except Exception as e:
     print(f"Error during racaty_upload: {e}")
@@ -57,7 +57,7 @@ success_count = 0
 
 # Read URLs from output.txt
 try:
-    with open('output_link.txt', 'r') as file:
+    with open('zfinal_hasil.txt', 'r') as file:
         urls = file.readlines()
         urls = [url.strip() for url in urls if url.strip()]  # Remove empty lines and whitespace
 
@@ -144,4 +144,4 @@ try:
     print("=========================================")
 
 except FileNotFoundError:
-    print("The file 'output_link.txt' was not found. Please ensure it exists in the same directory.")
+    print("The file 'zfinal_hasil.txt' was not found. Please ensure it exists in the same directory.")
