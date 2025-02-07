@@ -21,7 +21,7 @@ def perform_curl_request(title, url):
         'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
         'cache-control': 'max-age=0',
         'content-type': 'application/x-www-form-urlencoded',
-        'cookie': '_ga=GA1.1.1180926332.1735003220; _ga_3P0P07VSKJ=GS1.1.1738293727.3.1.1738293744.0.0.0; app_session=svdtb2s5k3ubhe4agfjogrr4stsoicvt',
+        'cookie': '_ga=GA1.1.1180926332.1735003220; _ga_3P0P07VSKJ=GS1.1.1738293727.3.1.1738293744.0.0.0; app_session=6tnjs1oa8kq81f6hvtcpgk4p8npe8kkm',
         'origin': 'https://new.racaty.my.id',
         'priority': 'u=0, i',
         'referer': 'https://new.racaty.my.id/upload',

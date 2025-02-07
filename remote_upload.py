@@ -1,4 +1,5 @@
 from racaty_upload import racaty_upload
+import urllib.parse
 
 try:
     # upload racaty
@@ -34,21 +35,21 @@ def encrypt_url(url, key):
     return encrypted_base64
 
 # API Keys
-dood_api_key = '219725bbkborbourrp2cd4'
 lulustream_api_key = '936yclje4cl5mud6kcw'  # Lulustream API Key
-dood2_api_key = "291959xu8erref8zbc28jx"
 streamhg_api_key = "2426evezy9bm5xz0uzzy"
 veev_api_key = "81wfq1eryrdlombkfrej2ldx08p092x1rw"
 vinovo_api_key = "8b857a827319ed70f22e4d0668853f"
+dropload_api_key = "6228dp9snugc6viw066i"
+bigwarp_api_key = "1185roh927m637ogi3lv"
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
-dood_api_endpoint = "https://doodapi.com/api/upload/url"
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
 streamhg_api_endpoint = "https://streamhgapi.com/api/upload/url"
 veev_api_endpoint  = "https://veev.to/api/upload/url"
 vinovo_api_endpoint  = "https://api.vinovo.si/api/upload/url"
+dropload_endpoint = "https://dropload.io/api/upload/url"
+bigwarp_api_endpoint  = "https://bigwarp.io/api/upload/url"
 
-dood2_api_endpoint = dood_api_endpoint
 
 # Variabel untuk menghitung jumlah sukses
 success_count = 0
@@ -67,17 +68,7 @@ try:
         encrypted = encrypt_url(url, key)
         new_url = f"https://darenx-upbkafe.hf.space/ex/{encrypted}"
 
-        # Kirim permintaan ke DoodAPI
-        try:
-            # DoodAPI request
-            response_dood = httpx.get(dood_api_endpoint, params={"key": dood_api_key, "url": new_url})
-            if response_dood.status_code == 200:
-                success_count += 1
-            else:
-                print(f"Failed: {new_url} - DoodAPI Response: {response_dood.status_code} - {response_dood.text}")
-        except Exception as e:
-            print(f"Error during DoodAPI request for {new_url}: {e}")
-
+        
         try:
             # Lulustream request
             response_lulustream = httpx.get(lulustream_api_endpoint, params={"key": lulustream_api_key, "url": new_url})
@@ -88,16 +79,7 @@ try:
         except Exception as e:
             print(f"Error during Lulustream request for {new_url}: {e}")
 
-        try:
-            # dood2 request
-            response_dood2 = httpx.get(dood2_api_endpoint, params={"key": dood2_api_key, "url": new_url})
-            if response_dood2.status_code == 200:
-                success_count += 1
-            else:
-                print(f"Failed: {url} - Dood2 Response: {response_dood2.status_code} - {response_dood2.text}")
-        except Exception as e:
-            print(f"Error during Dood2 request for {new_url}: {e}")
-
+        
         try:
             # streamhg request
             response_streamhg = httpx.get(streamhg_api_endpoint, params={"key": streamhg_api_key, "url": new_url})
@@ -130,7 +112,32 @@ try:
         except Exception as e:
             print(f"Error during Vinovo request for {url}: {e}")
 
-        print(f"=====> SUCCES UPLOAD KE Doodstream & Lulustream <============= ")
+        try:
+            url_to_upload = f"{dropload_endpoint}?key={dropload_api_key}&url={new_url}"
+
+            # dropload request
+            response_dropload = httpx.get(url_to_upload)
+            if response_dropload.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - Dropload Response: {response_dropload.status_code} - {response_dropload.text}")
+        except Exception as e:
+            print(f"Error during Vinovo request for {url}: {e}")
+
+        try:
+            url_to_upload = f"{bigwarp_api_endpoint}?key={bigwarp_api_key}&url={new_url}"
+
+            # dropload request
+            response_bigwarp = httpx.get(url_to_upload)
+            if response_bigwarp.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - bigwarp Response: {response_bigwarp.status_code} - {response_bigwarp.text}")
+        except Exception as e:
+            print(f"Error during Vinovo request for {url}: {e}")
+
+
+        print(f"=====> SUCCES UPLOAD KE DropLOAD & Lulustream <============= ")
 
     # Tampilkan total jumlah sukses
     print("\n=========================================")
