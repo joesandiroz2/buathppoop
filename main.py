@@ -4,8 +4,71 @@ import subprocess
 import threading
 from flask_socketio import SocketIO, emit
 from racaty_upload_by_slash_title import racaty_upload_slash
-
+from scrape_jav.javeve.main import scrape_javeve,fetch_redirect_url
 app = Flask(__name__)
+
+
+
+def write_links_to_file(output_file_path,final_results):
+
+    
+    # Ensure the directory exists
+    os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+
+    with open(output_file_path, 'a') as file:  # Open the file in append mode
+        for title, urls in final_results.items():
+            for url in urls:
+                file.write(f"{url}\n")  # Write each URL on a new line
+
+@app.route("/read_output", methods=['GET'])
+def read_output():
+    # Get the path from the query parameters
+    output_file_path = request.args.get('path', default='scrape_jav/javeve/output_javeve.txt', type=str)
+    
+    # Ensure the path is safe (you can implement more robust checks as needed)
+    if not output_file_path.startswith('scrape_jav/javeve/'):
+        return "Invalid file path.", 400
+
+    # Check if the file exists and read its contents
+    if os.path.exists(output_file_path):
+        with open(output_file_path, 'r') as file:
+            content = file.read()
+    else:
+        content = "File not found."
+
+    return content
+
+@app.route("/scrape/javeve", methods=['GET', 'POST'])
+def scrapejaveve():
+    final_results = {}
+    page = 1  # Default page number
+    search = ""  # Default search term
+
+    if request.method == 'POST':
+        page = request.form.get('page', default=1, type=int)  # Get the page number from the form
+        search = request.form.get('search', default="", type=str)  # Get the search term from the form
+        scraped_data = scrape_javeve(page, search)
+        
+        if scraped_data:
+            for item in scraped_data:
+                additional_data = item['additional_data']
+                if additional_data:
+                    for title, data_link in additional_data.items():
+                        redirect_url = fetch_redirect_url(data_link)
+                        if redirect_url:
+                            # If the title is already in final_results, append the URL
+                            if title in final_results:
+                                final_results[title].append(redirect_url)
+                            else:
+                                # Otherwise, create a new list with the URL
+                                final_results[title] = [redirect_url]
+
+            # Write the links to the output file
+            write_links_to_file("scrape_jav/javeve/output_javeve.txt",final_results)
+
+    return render_template("/jav/javeve/index.html", data=final_results, page=page, search=search)
+
+
 socketio = SocketIO(app)  # Inisialisasi SocketIO
 
 # Nama file untuk menyimpan data
