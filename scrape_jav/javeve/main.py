@@ -4,37 +4,46 @@ from bs4 import BeautifulSoup
 def scrape_javeve(page=1, search=None):
     # Construct the URL based on the search term and page number
     if search:
-        url = f"https://javeve.tv/page/{page}/?s={search}"
+        url = f"https://darenx-unblockjapan.hf.space/proxy/https://javeve.tv/page/{page}/?s={search}"
     else:
-        url = f"https://javeve.tv/censored-jav/page/{page}/"
+        url = f"https://darenx-unblockjapan.hf.space/proxy/https://javeve.tv/censored-jav/page/{page}/"
 
-    print(url)
+    print(f"Scraping URL: {url}")
     scraper = cloudscraper.create_scraper()
-    response = scraper.get(url)
 
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        posts = soup.find_all('div', class_='post')
-        
-        results = []  # To store the main results
-        
-        for post in posts:
-            link = post.find('a', class_='img')['href']
-            img = post.find('img')['data-original'] if post.find('img')['data-original'] else post.find('img')['src']
-            print(f"\n{link}\n")
-            # Scrape additional data from the individual post link
-            additional_data = scrape_additional_data(link)
-            
-            results.append({
-                'href': link,
-                'img': img,
-                'additional_data': additional_data
-            })
-        return results  # Return the main results
-    else:
-        print("Failed to access the main page")
+    try:
+        response = scraper.get(url)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+    except Exception as e:
+        print(f"Failed to access the main page: {e}")
         return None
 
+    try:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        posts = soup.find_all('div', class_='post')
+
+        results = []  # To store the main results
+
+        for post in posts:
+            try:
+                link = post.find('a', class_='img')['href']
+                img = post.find('img')['data-original'] if 'data-original' in post.find('img').attrs else post.find('img')['src']
+                print(f"\n{link}\n")
+                # Scrape additional data from the individual post link
+                additional_data = scrape_additional_data(link)
+
+                results.append({
+                    'href': link,
+                    'img': img,
+                    'additional_data': additional_data
+                })
+            except Exception as e:
+                print(f"Failed to process post: {e}")
+
+        return results  # Return the main results
+    except Exception as e:
+        print(f"Failed to parse the main page: {e}")
+        return None
 def scrape_additional_data(link):
     scraper = cloudscraper.create_scraper()
     response = scraper.get(link)

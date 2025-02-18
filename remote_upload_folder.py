@@ -1,13 +1,3 @@
-from racaty_upload import racaty_upload
-
-try:
-    # upload racaty
-    print("Starting racaty_upload upload_link.txt ...")
-    racaty_upload("zfinal_hasil.txt")
-    print("racaty_upload completed. Continuing with the rest of the code...")
-except Exception as e:
-    print(f"Error during racaty_upload: {e}")
-
 
 
 import base64
@@ -40,6 +30,8 @@ veev_api_key = "81wfq1eryrdlombkfrej2ldx08p092x1rw"
 vinovo_api_key = "8b857a827319ed70f22e4d0668853f"
 dropload_api_key = "6228dp9snugc6viw066i"
 bigwarp_api_key = "1185roh927m637ogi3lv"
+abstream_api_key = "23vj7x7uk12znfyaxc"
+
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
@@ -48,6 +40,7 @@ veev_api_endpoint  = "https://veev.to/api/upload/url"
 vinovo_api_endpoint  = "https://api.vinovo.si/api/upload/url"
 dropload_endpoint = "https://dropload.io/api/upload/url"
 bigwarp_api_endpoint  = "https://bigwarp.io/api/upload/url"
+abstream_api_endpoint  = "https://abstream.to/api/upload/url"
 
 
 # Variabel untuk menghitung jumlah sukses
@@ -134,6 +127,18 @@ try:
                 print(f"Failed: {url} - bigwarp Response: {response_bigwarp.status_code} - {response_bigwarp.text}")
         except Exception as e:
             print(f"Error during Vinovo request for {url}: {e}")
+
+        try:
+            url_to_upload = f"{abstream_api_endpoint}?key={abstream_api_key}&url={new_url}"
+
+            # abstream request
+            response_abstream = httpx.get(url_to_upload)
+            if response_abstream.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - abstream Response: {response_abstream.status_code} - {response_abstream.text}")
+        except Exception as e:
+            print(f"Error during abstream request for {url}: {e}")
 
 
         print(f"=====> SUCCES UPLOAD KE DropLOAD & Lulustream <============= ")
