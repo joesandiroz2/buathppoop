@@ -13,8 +13,14 @@
 
 
     <style>
+        textarea{
+            color: white;
+            border:2px solid white;
+            font-weight: bold;
+        }
         body {
-            background-color: #f0f0f0; /* Warna latar belakang abu-abu */
+            background-color: black; /* Warna latar belakang abu-abu */
+            color:white;
         }
         .container {
             margin-top: 50px;
@@ -51,7 +57,7 @@
                 <p id="total-links">Total link: 0</p>
                 <div class="input-field">
                     <textarea 
-                      style="border:3px solid black;height:250px" 
+                      style="border:3px solid white;height:250px" 
                     name="link_data" id="link_data" class="materialize-textarea" placeholder="Masukkan link di sini..."></textarea>
                     <label for="link_data">Link</label>
                 </div>
@@ -79,9 +85,9 @@
                 <button id="dood-extract" class="btn  waves-effect waves-light orange darken-3 btn-large">Dood Extract </button>
   
                 <div id="process-status" class="success-message"></div>
-                    <span id="totallinkpreview" class="bold-text center-align" style="font-weight: bold;"></span>
+                    <span id="totallinkpreview" class="bold-text center-align " style="font-weight: bold;"></span>
                  <!-- Tempat untuk menampilkan status proses -->
-                <ul class="collection">
+                <ul class="collection black-text">
                     {% if preview_links %}
                         {% for link in preview_links %}
                             <li class="collection-item">{{ link }}</li>
@@ -96,7 +102,7 @@
 
         <div class="col s12 m5 l5">
             <h5>Output Proses:</h5>
-            <div id="outputproses"></div>
+            <div id="outputproses" class="white-text"></div>
 
             <div class="card ">
                 <button class="btn green" id="kirim-preview">Kirim ke Preview Link</button>
@@ -104,7 +110,7 @@
                  <button class="btn red" id="tampilkan-zfinal">Tampilkan zfinal_hasil.txt</button>
                
                 <textarea 
-                style="border:3px solid black;width: 100%;height: 300px;" 
+                style="border:3px solid black;width: 100%;height: 300px;color: black;" 
                 id="output-textarea" readonly></textarea>
             </div>
         </div>
