@@ -1,1 +1,1 @@
-domain_ganti = "https://poop.ga"  
+domain_ganti = "https://poop.ee"  

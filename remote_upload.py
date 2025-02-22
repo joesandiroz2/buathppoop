@@ -31,6 +31,7 @@ vinovo_api_key = "8b857a827319ed70f22e4d0668853f"
 dropload_api_key = "6228dp9snugc6viw066i"
 bigwarp_api_key = "1185roh927m637ogi3lv"
 abstream_api_key = "23vj7x7uk12znfyaxc"
+doodstream_api_key = "219725bbkborbourrp2cd4"
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
@@ -40,6 +41,7 @@ vinovo_api_endpoint  = "https://api.vinovo.si/api/upload/url"
 dropload_endpoint = "https://dropload.io/api/upload/url"
 bigwarp_api_endpoint  = "https://bigwarp.io/api/upload/url"
 abstream_api_endpoint  = "https://abstream.to/api/upload/url"
+doodstream_api_endpoint  = "https://doodapi.com/api/upload/url"
 
 
 # Variabel untuk menghitung jumlah sukses
@@ -59,7 +61,16 @@ try:
         encrypted = encrypt_url(url, key)
         new_url = f"https://darenx-upbkafe.hf.space/ex/{encrypted}"
 
-        
+        try:
+            # doodstream request
+            response_doodstream= httpx.get(doodstream_api_endpoint, params={"key": doodstream_api_key, "url": new_url})
+            if response_doodstream.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - doodstream Response: {response_doodstream.status_code} - {response_doodstream.text}")
+        except Exception as e:
+            print(f"Error during Lulustream request for {new_url}: {e}")
+
         try:
             # Lulustream request
             response_lulustream = httpx.get(lulustream_api_endpoint, params={"key": lulustream_api_key, "url": new_url})
