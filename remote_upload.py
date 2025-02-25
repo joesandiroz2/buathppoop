@@ -32,6 +32,7 @@ dropload_api_key = "6228dp9snugc6viw066i"
 bigwarp_api_key = "1185roh927m637ogi3lv"
 abstream_api_key = "23vj7x7uk12znfyaxc"
 doodstream_api_key = "219725bbkborbourrp2cd4"
+earnvids_api_key = "36517tjrapmevlesh1pq8"
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
 lulustream_api_endpoint = "https://api.lulustream.com/api/upload/url"
@@ -42,7 +43,7 @@ dropload_endpoint = "https://dropload.io/api/upload/url"
 bigwarp_api_endpoint  = "https://bigwarp.io/api/upload/url"
 abstream_api_endpoint  = "https://abstream.to/api/upload/url"
 doodstream_api_endpoint  = "https://doodapi.com/api/upload/url"
-
+earnvids_api_endpoint = "https://earnvidsapi.com/api/upload/url"
 
 # Variabel untuk menghitung jumlah sukses
 success_count = 0
@@ -150,6 +151,17 @@ try:
         except Exception as e:
             print(f"Error during abstream request for {url}: {e}")
 
+        try:
+            url_to_upload = f"{earnvids_api_endpoint}?key={earnvids_api_key}&url={new_url}"
+
+            # abstream request
+            response_earnvid = httpx.get(url_to_upload)
+            if response_earnvid.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - earnvids Response: {response_earnvid.status_code} - {response_earnvid.text}")
+        except Exception as e:
+            print(f"Error during abstream request for {url}: {e}")
 
         print(f"=====> SUCCES UPLOAD KE DropLOAD & Lulustream <============= ")
 

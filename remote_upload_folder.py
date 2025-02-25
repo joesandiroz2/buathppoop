@@ -31,6 +31,8 @@ vinovo_api_key = "8b857a827319ed70f22e4d0668853f"
 dropload_api_key = "6228dp9snugc6viw066i"
 bigwarp_api_key = "1185roh927m637ogi3lv"
 abstream_api_key = "23vj7x7uk12znfyaxc"
+earnvids_api_key = "36517tjrapmevlesh1pq8"
+
 
 
 key = "mysecretkey12345"  # Kunci AES untuk enkripsi
@@ -41,6 +43,7 @@ vinovo_api_endpoint  = "https://api.vinovo.si/api/upload/url"
 dropload_endpoint = "https://dropload.io/api/upload/url"
 bigwarp_api_endpoint  = "https://bigwarp.io/api/upload/url"
 abstream_api_endpoint  = "https://abstream.to/api/upload/url"
+earnvids_api_endpoint = "https://earnvidsapi.com/api/upload/url"
 
 
 # Variabel untuk menghitung jumlah sukses
@@ -137,6 +140,18 @@ try:
                 success_count += 1
             else:
                 print(f"Failed: {url} - abstream Response: {response_abstream.status_code} - {response_abstream.text}")
+        except Exception as e:
+            print(f"Error during abstream request for {url}: {e}")
+
+        try:
+            url_to_upload = f"{earnvids_api_endpoint}?key={earnvids_api_key}&url={new_url}"
+
+            # abstream request
+            response_earnvid = httpx.get(url_to_upload)
+            if response_earnvid.status_code == 200:
+                success_count += 1
+            else:
+                print(f"Failed: {url} - earnvids Response: {response_earnvid.status_code} - {response_earnvid.text}")
         except Exception as e:
             print(f"Error during abstream request for {url}: {e}")
 
