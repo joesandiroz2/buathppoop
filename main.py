@@ -8,6 +8,64 @@ from scrape_jav.javeve.main import scrape_javeve,fetch_redirect_url
 app = Flask(__name__)
 
 
+from flask_socketio import SocketIO
+
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+
+@app.route("/poopbaru", methods=["GET", "POST"])
+def poopbaru():
+    return render_template("poopbaru.html")
+
+@app.route("/get_output", methods=["GET"])
+def get_output():
+    try:
+        with open('output_link.txt', 'r') as f:
+            content = f.read()
+        return jsonify({"content": content})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@socketio.on("run_script")
+def handle_run_script(data):
+    links = data.get("links", "").strip()
+    script_type = data.get("script_type", "").strip()
+
+    if not script_type:
+        socketio.emit("script_output", {"output": "Error: script_type is required!"})
+        return
+    if not links:
+        socketio.emit("script_output", {"output": "Error: Links cannot be empty!"})
+        return
+
+    if script_type == "d":
+        with open("link.txt", "w") as f:
+            f.write(links)
+        script_file = "poop_jalan.py"
+    elif script_type == "f":
+        with open("folder_link.txt", "w") as f:
+            f.write(links)
+        script_file = "poop_jalan_folder.py"
+    else:
+        socketio.emit("script_output", {"output": "Error: Invalid script_type!"})
+        return
+
+    # Jalankan script dengan output realtime
+    process = subprocess.Popen(
+        ["python3", script_file],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+
+    for line in process.stdout:
+        socketio.emit("script_output", {"output": line.strip()})
+
+    for line in process.stderr:
+        socketio.emit("script_output", {"output": f"Error: {line.strip()}"})
+
+    socketio.emit("script_done", {"message": "Proses selesai!"})
+
 
 def write_links_to_file(output_file_path,final_results):
 
@@ -69,7 +127,7 @@ def scrapejaveve():
     return render_template("/jav/javeve/index.html", data=final_results, page=page, search=search)
 
 
-socketio = SocketIO(app)  # Inisialisasi SocketIO
+# socketio = SocketIO(app)  # Inisialisasi SocketIO
 
 # Nama file untuk menyimpan data
 LINK_FILE = 'link.txt'
