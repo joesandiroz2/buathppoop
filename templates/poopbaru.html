@@ -10,7 +10,7 @@
 </head>
 <body style="background-color: black; color: white;">
     <div class="container mt-5">
-        <h1>Input Poopbaru Links</h1>
+        <h5>Input Poopbaru Links</h5>
         <form id="linkForm">
             <div class="form-group">
                 <textarea class="form-control" id="links" rows="10" placeholder="Masukkan link per baris..." required></textarea>
@@ -31,8 +31,47 @@
         </div>
     </div>
 
+   <div class="container" style="margin-bottom: 30%;">
+    <h3>grabnwatch</h3>
+    <textarea name="txtgrabnwatch" placeholder="masukan doodlink grabnwatch" style="width:100vw;height: 300px;" id="grabnwatchLinks"></textarea>
+    <button class="btn btn-warning" id="btnGrabnwatch">Jalan Grabnwatch</button>
+</div>
+
     <script>
         var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port );
+
+
+    $("#btnGrabnwatch").click(function() {
+        let links = $("#grabnwatchLinks").val().trim();
+        if (!links) {
+            alert("Masukkan link terlebih dahulu!");
+            return;
+        }
+         // Disable button and show processing message
+        $("#btnGrabnwatch").prop("disabled", true).text("Sedang Memproses...");
+
+
+        // Kirim data ke server
+        $.ajax({
+            type: "POST",
+            url: "/grabnwatch",
+            contentType: "application/json",
+            data: JSON.stringify({ links: links.split('\n') }), // Mengirimkan array link
+            success: function(response) {
+                alert("Proses Grabnwatch selesai!");
+                console.log(response.results); // Tampilkan hasil di console
+                 $("#grabnwatchLinks").val("");
+            },
+            error: function(error) {
+                alert("Error: " + error.responseText);
+            },
+            complete: function() {
+                // Enable button after process is complete
+                $("#btnGrabnwatch").prop("disabled", false).text("Jalan Grabnwatch");
+            }
+
+        });
+    });
 
         function runScript(type) {
             let links = document.getElementById("links").value.trim();

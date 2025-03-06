@@ -5,6 +5,9 @@ import threading
 from flask_socketio import SocketIO, emit
 from racaty_upload_by_slash_title import racaty_upload_slash
 from scrape_jav.javeve.main import scrape_javeve,fetch_redirect_url
+from grabnwatch import grabnwatch_process_links
+
+
 app = Flask(__name__)
 
 
@@ -12,6 +15,36 @@ from flask_socketio import SocketIO
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+
+@app.route("/grabnwatch", methods=["POST"])
+def handle_grabnwatch():
+    links = request.json.get("links", [])
+    
+    # Menulis link ke file link.txt
+    with open("link.txt", "w") as f:
+        for link in links:
+            f.write(link + "\n")
+
+    # Memanggil fungsi dari grabnwatch.py
+    results = grabnwatch_process_links(links)
+
+    # Menulis hasil ke output_link.txt
+    with open("output_link.txt", "w") as f:
+        for result in results:
+            f.write(result + "\n")  # Menulis setiap hasil ke baris baru
+
+    # Menjalankan grabnwatch_remote_upload.py setelah proses selesai
+    try:
+        subprocess.run(["python3", "grabnwatch_remote_upload.py"], check=True)
+        print("grabnwatch_remote_upload.py executed successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error occurred while executing grabnwatch_remote_upload.py: {e}")
+
+    socketio.emit("script_output", {"output": "\n".join(results)})
+
+    return jsonify({"results": results})
+
+   
 
 @app.route("/poopbaru", methods=["GET", "POST"])
 def poopbaru():
