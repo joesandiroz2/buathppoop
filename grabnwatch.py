@@ -1,38 +1,47 @@
-import requests
-from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import time
 
 def grabnwatch_process_links(links):
     results = []
-    for link in links:
-        print(link)  # For debugging, can be removed if not needed
+    
+    # Setup Chrome options
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Menjalankan browser di background
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+
+    # Inisialisasi driver
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+    total_links = len(links)  # Total jumlah link yang akan diproses
+
+    for index, link in enumerate(links):
+        print(f"Processing {index + 1} dari {total_links}: {link}")  # Menampilkan proses
+        driver.get('https://grabnwatch.com/')
+        time.sleep(2)  # Tunggu beberapa detik agar halaman sepenuhnya dimuat
+
+        # Temukan kotak input dan masukkan link
+        input_box = driver.find_element(By.NAME, 'video_url')
+        input_box.clear()
+        input_box.send_keys(link)
+
+        # Klik tombol grab
+        grab_button = driver.find_element(By.XPATH, '//button[contains(text(), "Grab")]')
+        grab_button.click()
+        time.sleep(5)  # Tunggu beberapa detik untuk mendapatkan hasil
+
+        # Ambil link download
         try:
-            response = requests.post(
-                'https://grabnwatch.com/',
-                headers={
-                    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-                    'accept-language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
-                    'cache-control': 'max-age=0',
-                    'content-type': 'application/x-www-form-urlencoded',
-                    'origin': 'https://grabnwatch.com',
-                    'referer': 'https://grabnwatch.com/',
-                    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
-                },
-                data={'video_url': link}
-            )
+            download_link = driver.find_element(By.CLASS_NAME, 'btn-secondary').get_attribute('href')
+            print(download_link)
+            results.append(download_link)
+        except Exception as e:
+            print(f"Error: Download link not found for link: {link}. Error: {e}")
 
-            if response.ok:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                try:
-                    download_link = soup.find('a', class_='btn btn-secondary mb-4')['href']
-                    full_link = f'https://grabnwatch.com{download_link}'
-                    results.append(full_link)
-                except TypeError:
-                    print(f"Error: Download link not found for link: {link}")
-            else:
-                print(f"Error: Received response code {response.status_code} for link: {link}")
-
-        except requests.exceptions.RequestException as e:
-            print(f"Request failed for link: {link}. Error: {e}")
+    driver.quit()
 
     # Write results to output_link.txt
     with open("output_link.txt", "w") as f:
@@ -40,3 +49,4 @@ def grabnwatch_process_links(links):
             f.write(result + "\n")  # Write each result to a new line
 
     return results
+

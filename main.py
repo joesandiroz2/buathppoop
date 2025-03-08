@@ -27,7 +27,7 @@ def handle_grabnwatch():
 
     # Memanggil fungsi dari grabnwatch.py
     results = grabnwatch_process_links(links)
-
+    print(results)
     # Menulis hasil ke output_link.txt
     with open("output_link.txt", "w") as f:
         for result in results:
@@ -36,11 +36,12 @@ def handle_grabnwatch():
     # Menjalankan grabnwatch_remote_upload.py setelah proses selesai
     try:
         subprocess.run(["python3", "grabnwatch_remote_upload.py"], check=True)
+        socketio.emit("script_output", {"output": "\n".join(results)})
         print("grabnwatch_remote_upload.py executed successfully.")
     except subprocess.CalledProcessError as e:
         print(f"Error occurred while executing grabnwatch_remote_upload.py: {e}")
+        socketio.emit("script_output", {"output": "\n".join(results)})
 
-    socketio.emit("script_output", {"output": "\n".join(results)})
 
     return jsonify({"results": results})
 
