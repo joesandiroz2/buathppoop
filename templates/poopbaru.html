@@ -27,6 +27,7 @@
         <div class="container">
     <div class="row">
             <button id="showOutput" class="btn btn-info">Tampilkan output_link.txt</button>
+            <button id="showlinktxt" class="btn btn-danger">Tampilkan link.txt</button>
         <textarea id="outputTextArea" style="width: 100vw; height: 600px; margin-bottom: 40px;"></textarea>
         </div>
     </div>
@@ -95,6 +96,16 @@
             $("#btnD, #btnF").prop("disabled", false).text("Jalan /d/ atau /f/");
             alert(data.message);
         });
+
+            $("#showlinktxt").click(function() {
+        $.getJSON("/get_link", function(data) {
+            if (data.error) {
+                alert("Error: " + data.error);
+            } else {
+                $("#outputTextArea").val(data.content);  // Mengisi textarea dengan isi file
+            }
+        });
+    });
 
         // Event listener untuk tombol menampilkan output_link.txt
         $("#showOutput").click(function() {

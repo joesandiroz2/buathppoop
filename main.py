@@ -51,6 +51,15 @@ def handle_grabnwatch():
 def poopbaru():
     return render_template("poopbaru.html")
 
+@app.route("/get_link", methods=["GET"])
+def get_link():
+    try:
+        with open('link.txt', 'r') as f:
+            content = f.read()
+        return jsonify({"content": content})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+        
 @app.route("/get_output", methods=["GET"])
 def get_output():
     try:

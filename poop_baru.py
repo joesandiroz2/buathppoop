@@ -11,7 +11,8 @@ def get_video_link(url):
     try:
         # Mengambil ID dari URL
         video_id = url.split('/')[-1]
-        api_url = f'{domain_ganti}/p0?id={video_id}'
+        # api_url = f'{domain_ganti}/p0?id={video_id}'
+        api_url = f'https://api.poophd.com/player.php?id={video_id}'
         
         headers = {
             'Referer': 'https://metrolagu.cam/',
